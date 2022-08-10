@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {NAME}
+  namespace: accu-{NAMESPACE}
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/add-base-url: '''true'''
+    nginx.ingress.kubernetes.io/proxy-body-size: 10240m
+    nginx.ingress.kubernetes.io/proxy-redirect-from: '''$scheme://$host/'''
+    nginx.ingress.kubernetes.io/proxy-redirect-to: '''$scheme://$host/modeler/workspace/{ID}/'''
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  rules:
+    - host: {host}
+      http:
+        paths:
+          - path: /modeler/workspace/{ID}(/|$)(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: {NAME}
+                port:
+                  number: 8787
